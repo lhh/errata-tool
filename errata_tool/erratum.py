@@ -164,7 +164,7 @@ https://access.redhat.com/articles/11258")
                 if advisory_old is None:
                     advisory_old = r
             if advisory is None:
-                print 'do not have requested data bailing'
+                print('do not have requested data bailing')
                 return None
 
             # Short circuit to get the advisory
@@ -299,7 +299,7 @@ https://access.redhat.com/articles/11258")
             raise
 
     def _fetch_by_bug(self, bug_id):
-        # print "fetch_by_bug"
+        # print("fetch_by_bug")
         try:
             url = self._url + "/bugs/" + str(bug_id) + "/advisories.json"
             rj = self._get(url)
@@ -310,8 +310,8 @@ https://access.redhat.com/articles/11258")
                     stored = True
                     self._fetch(e['id'])
                 else:
-                    print 'Warning: Ignoring additional erratum ' + \
-                        str(e['id']) + ' for bug ', str(bug_id)
+                    print('Warning: Ignoring additional erratum ' +
+                          str(e['id']) + ' for bug ', str(bug_id))
 
         except RuntimeError:
             # Requests seems to loop infinitely if this happens...
@@ -521,7 +521,7 @@ https://access.redhat.com/articles/11258")
 
         if len(allbugs):
             # url = self._url + '/api/v1/bug/refresh'
-            # print allbugs
+            # print(allbugs)
             # r = self._post(url, data=allbugs)
             # self._processResponse(r)
             # ^ XXX broken
@@ -633,26 +633,26 @@ https://access.redhat.com/articles/11258")
         return ret
 
     def dump(self):
-        print self
-        print "Package Owner Email:", self.package_owner_email
-        print "Manager Email:", self.manager_email
-        print "QE:", self.qe_email, " ", self.qe_group
-        print "Type:", self.errata_type
+        print(self)
+        print("Package Owner Email:", self.package_owner_email)
+        print("Manager Email:", self.manager_email)
+        print("QE:", self.qe_email, " ", self.qe_group)
+        print("Type:", self.errata_type)
         if len(self.current_flags) > 0:
-            print "Flags:", ' '.join(self.current_flags)
-        print "Synopsis:", self.synopsis
+            print("Flags:", ' '.join(self.current_flags))
+        print("Synopsis:", self.synopsis)
         print
-        print "Topic"
-        print "====="
-        print self.topic
-        print
-        print "Description"
-        print "==========="
-        print self.description
-        print
-        print "Solution"
-        print "========"
-        print self.solution
+        print("Topic")
+        print("=====")
+        print(self.topic)
+        print()
+        print("Description")
+        print("===========")
+        print(self.description)
+        print()
+        print("Solution")
+        print("========")
+        print(self.solution)
 
     def url(self):
         return self._url + "/advisory/" + str(self.errata_id)
