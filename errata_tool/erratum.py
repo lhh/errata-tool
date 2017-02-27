@@ -307,14 +307,16 @@ https://access.redhat.com/articles/11258")
         distqa_tps = 0
         distqa_passing = 0
         for tps in r:
+            distqa = ''
             if tps['rhnqa'] is True:
                 distqa_tps = distqa_tps + 1
+                distqa = 'distqa_'
             if tps['state'] == 'BAD' or \
                'failed to generate' in tps['state']:
-                self.addFlags('tps_errors')
+                self.addFlags(distqa + 'tps_errors')
                 continue
             if tps['state'] in ('BUSY', 'NOT_STARTED'):
-                self.addFlags('tps_wait')
+                self.addFlags(distqa + 'tps_wait')
                 continue
             if tps['rhnqa'] is True:
                 distqa_passing = distqa_passing + 1
