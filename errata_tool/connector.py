@@ -10,8 +10,7 @@ import krbV
 
 
 class ErrataConnector(object):
-    # Staging is https://errata.stage.engineering.redhat.com
-    _url = "https://errata.devel.redhat.com"
+    _url = None
     _auth = HTTPKerberosAuth(mutual_authentication=DISABLED)
     _username = None
     ssl_verify = True  # Shared
@@ -19,6 +18,15 @@ class ErrataConnector(object):
 
     # Timings are only recorded if debug is set to True
     timings = {'GET': {}, 'POST': {}, 'PUT': {}}
+
+    def __init__(self, **kwargs):
+        if self._url is not None:
+            return
+        if 'url' in kwargs:
+            self._url = kwargs['url']
+        else:
+            # Staging is https://errata.stage.engineering.redhat.com
+            self._url = 'https://errata.devel.redhat.com'
 
     def _set_username(self, **kwargs):
         if self._username is not None:

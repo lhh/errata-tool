@@ -106,6 +106,7 @@ class Erratum(ErrataConnector):
             self._update = True
 
     def __init__(self, **kwargs):
+        super(Erratum, self).__init__(**kwargs)
 
         self.ssl_verify = security.security_settings.ssl_verify()
 
