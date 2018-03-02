@@ -6,17 +6,37 @@ from jsonpath_rw import parse
 import re
 import time
 import six
+import krbV
 
 
 class ErrataConnector(object):
     # Staging is https://errata.stage.engineering.redhat.com
     _url = "https://errata.devel.redhat.com"
     _auth = HTTPKerberosAuth(mutual_authentication=DISABLED)
+    _username = None
     ssl_verify = True  # Shared
     debug = False
 
     # Timings are only recorded if debug is set to True
     timings = {'GET': {}, 'POST': {}, 'PUT': {}}
+
+    def _set_username(self, **kwargs):
+        if self._username is not None:
+            return
+        try:
+            ctx = krbV.default_context()
+            cache = ctx.default_ccache()
+            # XXX What if you have >1 ticket?
+            self._username = cache.principal()[0]
+        except:
+            raise ErrataException('Pigeon crap. Did it forget to run kinit?')
+
+    def getUser(self, **kwargs):
+        self._set_username()
+        name = self._username
+        if 'username' in kwargs:
+            name = kwargs['username']
+        return self._get(self._url + '/api/v1/user/' + name)
 
     # Shortcut
     def canonical_url(self, u):
@@ -96,6 +116,7 @@ class ErrataConnector(object):
         self.timings[call][url] = info
 
     def _post(self, u, **kwargs):
+        self._set_username()
         url = self.canonical_url(u)
         start = time.time()
         ret = None
@@ -117,6 +138,7 @@ class ErrataConnector(object):
         return ret
 
     def _get(self, u, **kwargs):
+        self._set_username()
         url = self.canonical_url(u)
         ret_data = None
         ret_json = None
@@ -159,6 +181,7 @@ class ErrataConnector(object):
         return ret_json
 
     def _put(self, u, **kwargs):
+        self._set_username()
         url = self.canonical_url(u)
         start = time.time()
         ret = None
