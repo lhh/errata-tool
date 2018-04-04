@@ -7,7 +7,7 @@ from errata_tool import security  # NOQA
 # Change this if you change the structure of the tables we assemble
 # here.  This is added to export() and checked on import().
 #
-_product_table_version = 3
+_product_table_version = 4
 
 
 class ProductList(ErrataConnector):
@@ -204,6 +204,15 @@ class ProductList(ErrataConnector):
             info['id'] = release['id']
             info['releases'] = {}
             info['products'] = {}
+            info['push_types'] = []
+
+            # product_versions.json doesn't contain push_types, so
+            # we must do another ET fetch to get a copy of what we
+            # just got for one additional piece of information
+            ver_extra = self._get('/products/' + str(prod) + '/product_versions/' + str(info['id']) + '.json')
+            if ver_extra is not None:
+                info['push_types'] = ver_extra['push_types']
+
             self.versions[n] = info
             versions[n] = release['name']
         self.products[prod]['versions'] = versions
